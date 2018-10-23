@@ -29,10 +29,44 @@ expect the need to have more and more money to cover one's habits. This dataset 
 I  ) People are needing more money throughout the time;
 II ) Is there any season on which loans are more requested?;
 III) Those with lower income get more loans(IncomeRange);
-IV ) Those who make less money will likely be in debt;(AmountDelinquent)
+IV )
 V  ) Not employed people will have smaller amount loans, as they don't have income(EmployementStatus, LoanOriginalAmount);
-VI ) Is there any state where the loans requests are bigger? Does it  give any insight about the state?(BorrowerState, LoanOriginalAmount)
+VI ) I there any state where the loans requests are bigger? Does it  give any insight about the state?(BorrowerState, LoanOriginalAmount)
 VII) What's the influence of credit scores in amount of loans, debit and income? If any?(creditScore, Loan, OriginalAmount, )
 
-As it is investigated, first thoughts on the answers may or may not be confirmed. From all the variables, not all, as the questins show, will be useful for the purpose of this work.
+As it is investigated, first thoughts on the answers may or may not be confirmed. From all the variables, not all, as the questions show, will be useful for the purpose of this work.
 
+## I) More loans throughout time
+
+One of the first things to think is the distributions of loans along a period of time. The assumption is that the density of loans will be greater in most recent years. Also, it can infered that in certain months the amount will also be bigger if compared to the rest of the years. 
+
+###Insert R code here with grouping loans by year, then months.
+
+Analyzing the data, we can conclude that...
+
+## II) Seasons and loans
+
+Following the same reasoning on item I, it's infered that on seasons like thanksgiving, christmas and summer vacations, are more likely to hace higher loans density. The reason is that people are on vacation and/or important comemrations.
+The following data shows:
+
+### insert R code grouping loans by months. Also try to check correlation between them
+
+There is ....
+
+## III) Lower the income higher the amount of loans
+It was speculated that individuals that have a lower salary are more likely to need more loans. Possibly those same individuals will be more in debt, have a higher deliquency amount. 
+
+### insert R code here that groups loans by salary and takes the minimals, also check that with the deliquency amount 
+
+## IV) Not employed and loan amount
+As a not employed person, is unlikely to be able to pay for a very big amount of money. The chance of paying it is lower and hence, although it seems contrary to good sense, on enot employed is likely to need more money, howeverif one requires more money than is able to pay, his score may get lower and will not be able to get benefits in the future.
+The data shows the following:
+
+#### insert R code that groups loans by occupation status
+
+## V)Geography and loans
+Which state in the US has a different economic level. Hence, there will be and interesting distribution of loans in each state
+
+###insert loans distribution by each state
+
+##VI) Credit score influence 
