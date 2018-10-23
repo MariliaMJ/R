@@ -1,0 +1,38 @@
+------------------
+```{r, include=FALSE, cache=TRUE}
+#install needed packages
+# install.packages('knitr',repos="http://cran.rstudio.com/")
+# install.packages("tidyr")
+#load libraries that I intend to use
+library("plyr") 
+library("tidyr")
+library("dplyr")
+library(ggplot2)
+library("ggthemes")
+library(gridExtra)
+library(reshape2)
+#load data
+s_fname <- "~/git/ProsperLoan_EDA/prosperLoanData.csv"
+d <- read.csv(s_fname)
+```
+
+##Abstract
+
+Analysis of loans in the USA. Concerns in finding patterns of behavior in loans purchase, including
+temporal, income, possibly type of carreer, geographic and others.
+
+##Introduction
+
+As the economical crisis spreaded throughtout the world as the consuming need and lack of job opportunities, it is to 
+expect the need to have more and more money to cover one's habits. This dataset can provide enough information for us answer a few initial questions:
+
+I  ) People are needing more money throughout the time;
+II ) Is there any season on which loans are more requested?;
+III) Those with lower income get more loans(IncomeRange);
+IV ) Those who make less money will likely be in debt;(AmountDelinquent)
+V  ) Not employed people will have smaller amount loans, as they don't have income(EmployementStatus, LoanOriginalAmount);
+VI ) Is there any state where the loans requests are bigger? Does it  give any insight about the state?(BorrowerState, LoanOriginalAmount)
+VII) What's the influence of credit scores in amount of loans, debit and income? If any?(creditScore, Loan, OriginalAmount, )
+
+As it is investigated, first thoughts on the answers may or may not be confirmed. From all the variables, not all, as the questins show, will be useful for the purpose of this work.
+
