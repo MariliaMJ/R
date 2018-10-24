@@ -26,13 +26,12 @@ temporal, income, possibly type of carreer, geographic and others.
 As the economical crisis spreaded throughtout the world as the consuming need and lack of job opportunities, it is to 
 expect the need to have more and more money to cover one's habits. This dataset can provide enough information for us answer a few initial questions:
 
-I  ) People are needing more money throughout the time;
-II ) Is there any season on which loans are more requested?;
+  I) People are needing more money throughout the time;
+ II) Is there any season on which loans are more requested?;
 III) Those with lower income get more loans(IncomeRange);
-IV )
-V  ) Not employed people will have smaller amount loans, as they don't have income(EmployementStatus, LoanOriginalAmount);
-VI ) I there any state where the loans requests are bigger? Does it  give any insight about the state?(BorrowerState, LoanOriginalAmount)
-VII) What's the influence of credit scores in amount of loans, debit and income? If any?(creditScore, Loan, OriginalAmount, )
+ IV) Not employed people will have smaller amount loans, as they don't have income(EmployementStatus, LoanOriginalAmount);
+  V) I there any state where the loans requests are bigger? Does it  give any insight about the state?(BorrowerState, LoanOriginalAmount)
+ VI) What's the influence of credit scores in amount of loans, debit and income? If any?(creditScore, Loan, OriginalAmount, )
 
 As it is investigated, first thoughts on the answers may or may not be confirmed. From all the variables, not all, as the questions show, will be useful for the purpose of this work.
 
@@ -69,4 +68,13 @@ Which state in the US has a different economic level. Hence, there will be and i
 
 ###insert loans distribution by each state
 
-##VI) Credit score influence 
+##VI) Credit score influence
+Lower the credit score, lower will be the possibilities to make financial transactions, including opportunities to make new prosper loans per se. A few questions may arise: what's the average score for this sample? Can one find a relation between loans, scores, income? Could one infer a score knowing those variables: income, employement, house owner?
+
+### insert average of score
+### correlation between loanamount score adn income range
+
+
+## Conclusion
+
+
