@@ -39,7 +39,17 @@ As it is investigated, first thoughts on the answers may or may not be confirmed
 
 One of the first things to think is the distributions of loans along a period of time. The assumption is that the density of loans will be greater in most recent years. Also, it can infered that in certain months the amount will also be bigger if compared to the rest of the years. 
 
-###Insert R code here with grouping loans by year, then months.
+```{r Number of Loans by Year, echo=FALSE, cache=TRUE}
+
+theme_set(theme_minimal(17))
+
+
+d$LoanOriginationDate <- as.Date(d$LoanOriginationDate,format = "%Y-%m-%d")
+d$LoanOriginationDate.year=format(d$LoanOriginationDate, "%Y")
+
+ggplot(aes(x = LoanOriginationDate.year), data = d) +
+  geom_histogram() + 
+  ggtitle('Number of Loans by Year')
 
 Analyzing the data, we can conclude that...
 
@@ -48,7 +58,17 @@ Analyzing the data, we can conclude that...
 Following the same reasoning on item I, it's infered that on seasons like thanksgiving, christmas and summer vacations, are more likely to hace higher loans density. The reason is that people are on vacation and/or important comemrations.
 The following data shows:
 
-### insert R code grouping loans by months. Also try to check correlation between them
+```{r Money Borrowed By Month, echo=FALSE, cache=TRUE}
+theme_set(theme_minimal(17))
+
+l_months <- c('Jan','Feb','Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep','Oct',
+              'Nov', 'Dec')
+d$LoanOriginationDate.month=format(d$LoanOriginationDate, "%b")
+d$LoanOriginationDate.month <- factor(d$LoanOriginationDate.month, l_months)
+
+ggplot(aes(x = LoanOriginationDate.month, y = LoanOriginalAmount), data = d) +
+  geom_bar(stat="identity") +
+  ggtitle('Money Borrowed By Month')
 
 There is ....
 
