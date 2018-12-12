@@ -7,10 +7,11 @@
 library("plyr") 
 library("tidyr")
 library("dplyr")
-library(ggplot)
+library(ggplot2)
 library("ggthemes")
 library(gridExtra)
 library(reshape2)
+library(lubridate)
 #load data
 source_file <- "https://s3.amazonaws.com/udacity-hosted-downloads/ud651/prosperLoanData.csv"
 loans <- read.csv(source_file)
@@ -40,8 +41,9 @@ As it is investigated, first thoughts on the answers may or may not be confirmed
 One of the first things to think is the distributions of loans along a period of time. The assumption is that the density of loans will be greater in most recent years. Also, it can infered that in certain months the amount will also be bigger if compared to the rest of the years. 
 
 ```{r Number of Loans by Year, echo=FALSE, cache=TRUE}
-d$LoanOriginationDate <- as.Date(d$LoanOriginationDate,format = "%Y-%m-%d")
-d$LoanOriginationDate.year = format(d$LoanOriginationDate, "%Y")
+x <- as.character(loans$LoanOriginationDate)
+loans$LoanOriginationDate <- ymd_hms(x)
+
 ggplot(aes(x = LoanOriginationDate), data = loans) +
   geom_histogram(fill = I("#0077C0")) + 
   ggtitle('Number of Loans by Year')
@@ -55,14 +57,18 @@ Following the same reasoning on item I, it's infered that on seasons like thanks
 The following data shows:
 
 ```{r Money Borrowed By Month, echo=FALSE, cache=TRUE}
-l_months <- c('Jan','Feb','Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep','Oct',
-              'Nov', 'Dec')
-d$LoanOriginationDate.month = format(d$LoanOriginationDate, "%b")
-d$LoanOriginationDate.month <- factor(d$LoanOriginationDate.month, l_months)
-
-ggplot(aes(x = LoanOriginationDate.month, y = LoanOriginalAmount), data = loans) +
-  geom_bar(stat="identity", fill = I("#0077C0")) +
-  ggtitle('Money Borrowed By Month')
+months <- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+loans$LoanOriginationDate.month <- loans$LoanOriginationDate %>%
+  format('%b')
+loans$LoanOriginationDate.month <- factor(loans$LoanOriginationDate.month,
+                                            months)
+ggplot(loans, aes(LoanOriginationDate.month)) +
+  geom_histogram(color = 'black', fill = '#007EE5') +
+  facet_wrap(~LoanOriginationDate.year) +
+  ggtitle('Number of Loans by Month') +
+  xlab('Month') +
+  ylab('Number of Loans')
 ```
 
 It is possible to see a bigger amount during december and january; As it was infered, months of major holidays and comemorations.
