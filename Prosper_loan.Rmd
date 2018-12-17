@@ -1,0 +1,213 @@
+------------------
+```{r, include=FALSE, cache=TRUE}
+#install needed packages
+# install.packages('knitr',repos="http://cran.rstudio.com/")
+# install.packages("tidyr")
+#load libraries that I intend to use
+library("plyr") 
+library("tidyr")
+library("dplyr")
+library(ggplot2)
+library("ggthemes")
+library(gridExtra)
+library(grid)
+library(reshape2)
+#load data
+s_fname <- "https://s3.amazonaws.com/udacity-hosted-downloads/ud651/prosperLoanData.csv"
+d <- read.csv(s_fname)
+
+```
+##Abstract
+
+Analysis of loans in the USA. Concerns in finding patterns of behavior in loans purchase, including
+temporal, income, possibly type of carreer, geographic and others.
+
+##Introduction
+
+As the economical crisis spreaded throughtout the world as the consuming need and lack of job opportunities, it is to 
+expect the need to have more and more money to cover one's habits. This dataset can provide enough information for us answer a few initial questions:
+
+  I) People are needing more money throughout the time;
+ II) Is there any season on which loans are more requested?;
+III) Those with lower income get more loans(IncomeRange);
+ IV) Not employed people will have smaller amount loans, as they don't have income(EmployementStatus, LoanOriginalAmount);
+  V) I there any state where the loans requests are bigger? Does it  give any insight about the state?(BorrowerState, LoanOriginalAmount)
+ VI) What's the influence of credit scores in amount of loans, debit and income? If any?(creditScore, Loan, OriginalAmount, )
+
+As it is investigated, first thoughts on the answers may or may not be confirmed. From all the variables, not all, as the questions show, will be useful for the purpose of this work.
+
+## I) More loans throughout time
+
+One of the first things to think is the distributions of loans along a period of time. The assumption is that the density of loans will be greater in most recent years. Also, it can infered that in certain months the amount will also be bigger if compared to the rest of the years. 
+
+```{r Number of Loans by Year, echo=FALSE, cache=TRUE}
+
+theme_set(theme_minimal(17))
+
+
+d$LoanOriginationDate <- as.Date(d$LoanOriginationDate,format = "%Y-%m-%d")
+d$LoanOriginationDate.year=format(d$LoanOriginationDate, "%Y")
+ggplot(aes(x = LoanOriginationDate), data = d) +
+  geom_histogram(, fill = I("#0077C0")) + 
+  ggtitle('Number of Loans by Year')
+```
+
+Looking at the graphic one sees that during 2013, 2014 the amount of loans were higher than the previous years. This dataset solely may not be enough to give an explanation of why  it happe, however it follows the initial assumption that the loans amount increased throughout the years.
+
+## II) Seasons and loans
+
+Following the same reasoning on item I, it's infered that on seasons like thanksgiving, christmas and summer vacations, are more likely to hace higher loans density. The reason is that people are on vacation and/or important comemrations.
+The following data shows:
+
+```{r Money Borrowed By Month, echo=FALSE, cache=TRUE}
+l_months <- c('Jan','Feb','Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep','Oct',
+              'Nov', 'Dec')
+d$LoanOriginationDate.month=format(d$LoanOriginationDate, "%b")
+d$LoanOriginationDate.month <- factor(d$LoanOriginationDate.month, l_months)
+
+ggplot(aes(x = LoanOriginationDate.month, y = LoanOriginalAmount), data = d) +
+  geom_histogram(stat="identity", fill = I("#0077C0")) +
+  ggtitle('Money Borrowed By Month')
+```
+
+It is possible to see a bigger amount during december and january; As it was infered, months of major holidays and comemorations.
+
+## III) Lower the income higher the amount of loans
+It was speculated that individuals that have a lower salary are more likely to need more loans. Possibly those same individuals will be more in debt, have a higher deliquency amount. 
+
+```{r, fig.width = 10}
+qplot(x = IncomeRange, data = d, fill = I("#0077C0")) + ggtitle("Loans per income range")
+```
+
+This data has a distribution similar to a normal one, although not perfectly fitting.
+
+Most of the people using Prosper have an income between $25000 and $75000, which is not on the lowest range, different from the 
+initial inference. That's, approximately $2100 to $6250 per month.
+According to Sentier Research, the median household income in the United States rose from $61,858 in May 2018 to $62,175 in June 2018, an increase of 0.5% over the previous month.
+[Found here.](https://seekingalpha.com/article/4193310-june-2018-median-household-income)
+Given that the initial conjecture that prosperloans would be for the ones with lower incomes was not confirmed, 
+one may wonder what the loans are for.
+
+```{r fig.width=12, fig.height=6, echo=FALSE}
+categories <- c('Not Available', 'Debt Consolidation', 'Home Improvement',
+                'Business', 'Personal Loan', 'Student Use', 'Auto', 'Other',
+                'Baby&Adoption', 'Boat', 'Cosmetic Procedure', 'Engagement Ring',
+                'Green Loans', 'Household Expenses', 'Large Purchases',
+                'Medical/Dental', 'Motorcycle', 'RV', 'Taxes', 'Vacation',
+                'Wedding Loans')
+d$ListingCategory <- d$ListingCategory..numeric %>%
+  as.factor() %>%
+  factor(labels = categories)
+ggplot(d, aes(ListingCategory)) +
+  geom_bar(aes(fill = ListingCategory)) +
+  ggtitle('Number of Loans by Category') +
+  xlab('Category') +
+  ylab('Number of Loans')
+```
+
+People use Prosper mostly for Debt Consolidation (1), Other (4), Home Improvement (2), or Business (3).
+That is very interesting. Debt consolidation implies in money being used for certain goals (health needs, emergencies, opportunities one cannot mis, etc), 
+that is, there was not enough money to fill that need, otherwise it would not be a debt.
+The last two options are interesting as well: indicate a need for personal growth, for improvement.
+Home imporvementn means well being, or even for a purpose to sell it or rent it, the last option imply in having extra income, which is very interesting,
+just like the last reason: Business. 
+
+## IV) Not employed and loan amount
+As a not employed person, is unlikely to be able to pay for a very big amount of money. The chance of paying it is lower and hence, although it seems contrary to good sense, on enot employed is likely to need more money, howeverif one requires more money than is able to pay, his score may get lower and will not be able to get benefits in the future.
+The data shows the following:
+
+```{r, fig.width = 10, fig.height = 9}
+ggplot(aes(x = reorder(Occupation, Occupation,
+                       function(x) -length(x)),
+           fill = I("#0077C0")),
+       data = d) +
+  geom_bar() +
+  xlab("Occupation") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+The first option gives no much information. Many people decide to not reveal his or her occupation for whatever reason, so it will difficult an analysis. The next ones reveal tha tmany people who choose to take prosper loans have a stablished carreer, so to speak. On eof them including an executive position. This result is counter the assumption that most people who need loans have no good jobs or have no jobs. 
+
+## V)Geography and loans
+Which state in the US has a different economic level. Hence, there will be and interesting distribution of loans in each state
+
+```{r, fig.width = 10, fig.height = 9}
+ggplot(aes(x = reorder(BorrowerState, BorrowerState, 
+                       function(x) length(x)),
+           fill = I("#0077C0")),
+       data = d) +
+  geom_bar() +
+  xlab("Borrower State") +
+  coord_flip() + ggtitle("Loans by state")
+```
+The distribution is positevely skewed. New York and California are usually among the top 10 most expensives states to live in the USA, it matches in the expectation that some states that require a higher economic level would have more loans.
+
+##VI) Credit score influence
+Lower the credit score, lower will be the possibilities to make financial transactions, including opportunities to make new prosper loans per se. A few questions may arise: what's the average score for this sample? Can one find a relation between loans, scores, income?
+
+```{r, fig.width = 10}
+d <- d %>%
+         mutate(CreditScore = CreditScoreRangeLower / 2 +
+                              CreditScoreRangeUpper / 2)
+
+CreditScoreCount <- qplot(x = CreditScore, data = d, binwidth = 20,
+      color = I("#424242"), fill = I("#0077C0")) +
+  scale_x_continuous(limits = c(400, 900), breaks = seq(400, 900, 50))
+grid.arrange(CreditScoreCount, ncol = 1)
+```
+This data has nearly a normal distribution, with mean approximately on 700. According to [research](https://www.cnbc.com/2018/09/24/average-fico-score-hits-an-all-time-high.html), this information seems to fit in. Also, to make such transactions, one needs to have a "trustworthy" score, otherwise it would be more difficult to get a new loan or other services in the USA.
+
+### correlation between loanamount score adn income range
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+with(d, cor.test(LoanOriginalAmount, CreditScoreRangeLower, 
+                        method = "pearson"))
+```
+
+According to the test, there is no much correlation between loan amounts and scores, as initially supposed.
+
+## Final Graphs
+
+The following graphs are the ones that called my attention the most:
+```{r, fig.width = 10, fig.height = 9}
+ggplot(aes(x = reorder(BorrowerState, BorrowerState, 
+                       function(x) length(x)),
+           fill = I("#0077C0")),
+       data = d) +
+  geom_bar() +
+  xlab("Borrower State") +
+  coord_flip() + ggtitle("Loans by state")
+```
+
+It constains an important view of the geopgraphic distribution of prosper loans, revealing, alongside the graph of reasons to make loans, a states condition.
+The graph containing the loans  by occupation called my attention in the annalysis because it indicated that a profession does ont dictate necessarily a need or not to have, well, more money. It would be even more revealing to know what are the individuals knowledge in investments or such subjects.
+```{r, fig.width = 10, fig.height = 9}
+ggplot(aes(x = reorder(Occupation, Occupation,
+                       function(x) -length(x)),
+           fill = I("#0077C0")),
+       data = d) +
+  geom_bar() +
+  xlab("Occupation") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+ The graph bellow shows another intereting pattern of money use.
+ 
+ 
+ ```{r fig.width=12, fig.height=6, echo=FALSE}
+categories <- c('Not Available', 'Debt Consolidation', 'Home Improvement',
+                'Business', 'Personal Loan', 'Student Use', 'Auto', 'Other',
+                'Baby&Adoption', 'Boat', 'Cosmetic Procedure', 'Engagement Ring',
+                'Green Loans', 'Household Expenses', 'Large Purchases',
+                'Medical/Dental', 'Motorcycle', 'RV', 'Taxes', 'Vacation',
+                'Wedding Loans')
+d$ListingCategory <- d$ListingCategory..numeric %>%
+  as.factor() %>%
+  factor(labels = categories)
+ggplot(d, aes(ListingCategory)) +
+  geom_bar(aes(fill = ListingCategory)) +
+  ggtitle('Number of Loans by Category') +
+  xlab('Category') +
+  ylab('Number of Loans')
+```
+
+## Final Thoughts
+Some of the initial assumptions were correct. Some were quite far for being true. Some results showed to be quite revealing, as distribution of loans per state and the use of loans. Joining this data with some other information,is possible to conclude a range of important economic information: who are the ones who need more prosper loans, why they need it, where it happens the most and if it has connection to salary.
+These conclusion may help enterprises to create solutions, or products that rely on those characteristics. It was a fascinating analysis.

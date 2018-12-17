@@ -1,0 +1,9 @@
+Fontes utilizadas
+
+https://github.com/yanndupis/Exploratory-Data-Analysis-with-R-Prosper/blob/master/Prosper-EDA-Yann-Dupis_final.Rmd
+https://github.com/nehal96/Prosper-Loans-Exploratory-Data-Analysis/blob/master/Prosper_Loans_EDA.rmd
+http://www.sthda.com/english/wiki/correlation-test-between-two-variables-in-r
+https://ggplot2.tidyverse.org/reference/geom_histogram.html
+https://www.earthdatascience.org/courses/earth-analytics/document-your-science/knit-rmarkdown-document-to-pdf/
+https://www.statmethods.net/stats/correlations.html
+https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html
